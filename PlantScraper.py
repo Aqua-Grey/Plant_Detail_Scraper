@@ -26,13 +26,14 @@ def clean_label(tag):
     return label.strip()
 
 def fetch_info(url):
-    data = {'Plant Url': url}
     print(f"Fetching info from {url} ...")
     # timing is optional. Browser.open is not
     before = time.time()
     browser.open(url)
     after = time.time()
     print(" Time to load page (possibly from cache): ", after - before)
+
+    data = {}
 
     # Extract the common name and botanical name from the page
     pt_tag = browser.page.find("div", attrs={"class": "page_title"})
@@ -74,39 +75,32 @@ def fetch_info(url):
     return(data)
 
 def main(df):
-    try:
-        urls = df['URL'].tolist()
-    except KeyError:
-        urls = df["Plant Url"].tolist()
-   
-    data = []
+    # Iterate through the rows in the dataframe, exctract URL, fetch,
+    # and add data to the row.
+    for index, item in df.iterrows():
+        # we have two ways this can show up, depending on which data
+        # we're importing:
+        try:
+            url = item['URL']
+        except KeyError:
+            url = item["Plant Url"]
 
-    # Create a Pandas dataframe to hold the scraped data
-    df_plants = pd.DataFrame(columns=['Name', 'Botanical Name', 'Companion Plants', 'Propagation',
-                                      'Butterflies & Moths hosted'])
-
-    # Iterate through the column containing URLs
-    for url in urls:
         info = fetch_info(url)
         if info is not None:
-            data.append(info)
-            #df_plants.append(info, ignore_index=True)
-            #df_plants.concat(["a", "b", "c","d", "e"])
-    df_plants = pd.DataFrame(data)
-    # Add the fetched data to the existing dataframe
-    df_updated = pd.concat([df, df_plants])
+            for key,value in info.items():
+                df.loc[index, key] = value
 
     # Change the filepath for the updated Excel file and create new file
     updated_filepath = "plants_updated.xlsx"
-    writer = pd.ExcelWriter(updated_filepath, engine='openpyxl', mode='w') 
-    df_updated.to_excel(writer, index=False) 
+    writer = pd.ExcelWriter(updated_filepath, engine='openpyxl', mode='w')
+    df.to_excel(writer, index=False)
     writer._save()
 
-    print("Data appended to the existing dataframe and a new file was created.")
+    print(f"Created {updated_filepath} with modified data.")
 
 
 if __name__ == '__main__':
-    existing_filepath = "../DataAnalysis_plantDataset/Companion_Plants_Detailed.xls" 
+    existing_filepath = "../DataAnalysis_plantDataset/Companion_Plants_Detailed.xls"
     alternate_filepath = "sample-data.csv"
     if os.path.exists(existing_filepath):
         df = pd.read_excel(existing_filepath)
@@ -121,7 +115,7 @@ if __name__ == '__main__':
 
     elif os.path.exists(alternate_filepath):
         df = pd.read_csv(alternate_filepath)
-    else: 
+    else:
         print(f"File does not exist. Please download {existing_filepath} first.")
         sys.exit(1)
 
