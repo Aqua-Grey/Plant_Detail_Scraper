@@ -1,5 +1,5 @@
 default:
-	./module_testCode.py
+	./PlantScraper.py
 
 env:
 	python3 -mvenv env
