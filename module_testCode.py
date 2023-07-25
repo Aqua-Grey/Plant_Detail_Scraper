@@ -25,6 +25,7 @@ def clean_label(tag):
     return label.strip()
 
 def fetch_info(url):
+    data = {'Plant Url': url}
     print(f"Fetching info from {url} ...")
     # timing is optional. Browser.open is not
     before = time.time()
@@ -49,7 +50,7 @@ def fetch_info(url):
         if isinstance(child,Comment):
             child.extract()
     #print("cn_tag: ", cn_tag, cn_tag.text)
-    cn = ''.join(cn_tag.findAll(text=True, recursive=False)).strip()
+    cn = ''.join(cn_tag.findAll(string=True, recursive=False)).strip()
     #cn = cn_tag.contents[0].strip()
     bn = cn_tag.find_next_sibling("div").text.strip()
     print(f"=== {bn} ({cn}) ===")
@@ -68,12 +69,14 @@ def fetch_info(url):
     for label in labels:
         if label in clean_tagLabel:
             index = clean_tagLabel.index(label)
-            print(f"  {label}:")
+            #print(f"  {label}:")
             info = tag_Label[index].find_next_sibling("div").text.strip()
-            indent = " "*4
-            print('\n'.join(textwrap.wrap(info, initial_indent=indent, subsequent_indent=indent)))
+            #print('\n'.join(textwrap.wrap(info, initial_indent=indent, subsequent_indent=indent)))
+            data[label] = info
         else:
             print(f"Could not find {label} in the list of labels")
+
+    return(data)
 
 '''
 def main(df):
@@ -85,7 +88,12 @@ def main(df):
 '''
 
 def main(df):
-    urls = df['URL'].tolist()
+    try:
+        urls = df['URL'].tolist()
+    except KeyError:
+        df["Plant Url"] = df["Plant Url"].map(lambda x: "https:" + x)
+        urls = df["Plant Url"].tolist()
+   
     data = []
 
     # Create a Pandas dataframe to hold the scraped data
@@ -95,19 +103,13 @@ def main(df):
     # Iterate through the column containing URLs
     for url in urls:
         info = fetch_info(url)
-        pp(info)
-        sys.exit(0)
         if info is not None:
             data.append(info)
-            df_plants.append(info)
-
-       # Add the fetched data to the existing dataframe
-    existing_filepath = "../DataAnalysis_plantDataset/Companion_Plants_Detailed.xls" 
-    if os.path.exists(existing_filepath):
-        df_existing = pd.read_excel(existing_filepath)
-        df_updated = pd.concat([df_existing, df_plants])
-    else:
-        df_updated = df_plants
+            #df_plants.append(info, ignore_index=True)
+            #df_plants.concat(["a", "b", "c","d", "e"])
+    df_plants = pd.DataFrame(data)
+    # Add the fetched data to the existing dataframe
+    df_updated = pd.concat([df, df_plants])
 
     # Change the filepath for the updated Excel file and create new file
     updated_filepath = "plants_updated.xlsx"
@@ -119,5 +121,15 @@ def main(df):
 
 
 if __name__ == '__main__':
-    df = pd.read_csv("plant-urls.csv")
-    main(df)
+    existing_filepath = "../DataAnalysis_plantDataset/Companion_Plants_Detailed.xls" 
+    if os.path.exists(existing_filepath):
+        df = pd.read_excel(existing_filepath)
+        # Drop the first three rows and set the fourth row as the header
+        df = df.iloc[3:]
+        df.columns = df.iloc[0]
+        df = df.iloc[1:]
+
+        main(df)
+    else: 
+        print(f"File does not exist. Please download {existing_filepath} first.")
+        sys.exit(1)
