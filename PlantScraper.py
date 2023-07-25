@@ -45,20 +45,16 @@ def fetch_info(url):
             print(browser.page)
         return
 
-    #print("pt_tag: ", pt_tag, pt_tag.text)
     cn_tag = pt_tag.find("div", attrs={"class": "common_name"})
     for child in cn_tag.children:
         if isinstance(child,Comment):
             child.extract()
-    #print("cn_tag: ", cn_tag, cn_tag.text)
     cn = ''.join(cn_tag.findAll(string=True, recursive=False)).strip()
-    #cn = cn_tag.contents[0].strip()
     bn = cn_tag.find_next_sibling("div").text.strip()
     print(f"=== {bn} ({cn}) ===")
 
     tag_Label = browser.page.find_all("div", attrs={"class": "label"})
     clean_tagLabel = [clean_label(value) for value in tag_Label]
-    #pp(clean_tagLabel)
 
     # This species_text span is set to display:none in the CSS
     # so it is not visible on the page.  But it is in the HTML
@@ -70,23 +66,12 @@ def fetch_info(url):
     for label in labels:
         if label in clean_tagLabel:
             index = clean_tagLabel.index(label)
-            #print(f"  {label}:")
             info = tag_Label[index].find_next_sibling("div").text.strip()
-            #print('\n'.join(textwrap.wrap(info, initial_indent=indent, subsequent_indent=indent)))
             data[label] = info
         else:
             print(f"Could not find {label} in the list of labels")
 
     return(data)
-
-'''
-def main(df):
-    urls = df['URL'].tolist()
-
-    # Iterate through the column containing URLs
-    for url in urls:
-        fetch_info(url)
-'''
 
 def main(df):
     try:
@@ -125,7 +110,9 @@ if __name__ == '__main__':
     alternate_filepath = "sample-data.csv"
     if os.path.exists(existing_filepath):
         df = pd.read_excel(existing_filepath)
-        # Drop the first three rows and set the fourth row as the header
+        # Our downloaded spreadsheet has some header-type stuff in the
+        # first three rows... so, drop those first three rows and set
+        # the fourth row as the header (for column names):
         df = df.iloc[3:]
         df.columns = df.iloc[0]
         df = df.iloc[1:]
