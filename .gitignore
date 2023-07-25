@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /plants_updated.xlsx
 /demo_cache.sqlite
+env
+.*xlsx#

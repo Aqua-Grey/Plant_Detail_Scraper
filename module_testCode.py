@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 import sqlite3
 import mechanicalsoup
@@ -91,7 +92,6 @@ def main(df):
     try:
         urls = df['URL'].tolist()
     except KeyError:
-        df["Plant Url"] = df["Plant Url"].map(lambda x: "https:" + x)
         urls = df["Plant Url"].tolist()
    
     data = []
@@ -115,21 +115,27 @@ def main(df):
     updated_filepath = "plants_updated.xlsx"
     writer = pd.ExcelWriter(updated_filepath, engine='openpyxl', mode='w') 
     df_updated.to_excel(writer, index=False) 
-    writer.save()
+    writer._save()
 
     print("Data appended to the existing dataframe and a new file was created.")
 
 
 if __name__ == '__main__':
     existing_filepath = "../DataAnalysis_plantDataset/Companion_Plants_Detailed.xls" 
+    alternate_filepath = "sample-data.csv"
     if os.path.exists(existing_filepath):
         df = pd.read_excel(existing_filepath)
         # Drop the first three rows and set the fourth row as the header
         df = df.iloc[3:]
         df.columns = df.iloc[0]
         df = df.iloc[1:]
+        # they leave out the https: in these, so... add it:
+        df["Plant Url"] = df["Plant Url"].map(lambda x: "https:" + x)
 
-        main(df)
+    elif os.path.exists(alternate_filepath):
+        df = pd.read_csv(alternate_filepath)
     else: 
         print(f"File does not exist. Please download {existing_filepath} first.")
         sys.exit(1)
+
+    main(df)
