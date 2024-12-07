@@ -1,20 +1,55 @@
-Miridae Mobile Nursery - Plant Photo Collection
 
-Welcome to the Miridae Mobile Nursery project! This repository provides a streamlined Python-based tool to help you retrieve photographs of plants from iNaturalist based on a curated plant list. Using a simple plants.txt file, this script connects to the iNaturalist API to download images for each listed plant, allowing for easy access to reference photos directly tied to your nursery’s offerings.
+# Plant Detail Scraper
 
+This repository contains Python scripts that were used to scrape plant details from the Calscape website before its recent update. The code utilizes tools such as MechanicalSoup and BeautifulSoup for web scraping, with data processing handled through pandas and SQLite. The primary focus of the script was to gather data about plants, including information on companion plants, propagation methods, and their relationships with butterflies and moths.
 
-Project Overview
+---
 
-This project aims to bridge the gap between plant lists and visual references, making it easier for enthusiasts, educators, and nursery operators to display plant images aligned with their inventory. With a focus on native plants, the Miridae Mobile Nursery project not only serves as a practical utility but also supports educational outreach and public engagement with local flora.
+### ⚠️ Important Notice ⚠️
 
+The Calscape website has undergone significant updates, and the structure of the site has changed. As a result, **this code will no longer function with the current version of the website**.
 
-Features
-    Simple Input: Place plant names in plants.txt, and the script takes care of the rest.
-    Automated Image Retrieval: Leverages the iNaturalist API to fetch and download images for each plant.
-    Customizable: Easily adapt the code for specific formatting or extended information needs, depending on your project goals.
+---
 
+### New Features on Calscape
 
-How to Use
-    Prepare a list of plant names in a text file (plants.txt).
-    Run the script to fetch images directly from iNaturalist.
-    Enjoy a directory of curated plant images matching your list.
+The updated website now includes:
+- **companion plant** recommendations.
+- **propagation information**.
+- **downloadable data**, making it easier to work with plant datasets without web scraping.
+
+Explore the updated Calscape website here: [https://calscape.org/](https://calscape.org/)
+
+---
+
+### Previous Script Capabilities
+
+Before the update, this script was used to:
+1. Scrape data from plant detail pages, including common and botanical names.
+2. Extract specific plant attributes such as:
+   - Companion plants.
+   - Propagation details.
+   - Host plants for butterflies and moths.
+3. Save the gathered data into a processed Excel file for further analysis.
+
+---
+
+### How to Adapt the Script
+
+If you are looking to scrape data from the new Calscape site:
+1. Explore the **downloadable datasets** available on the new website. These datasets might provide all the information you need without requiring a scraper.
+2. If scraping is still necessary, the script must be updated to accommodate the new structure of the Calscape website. This may involve:
+   - Adjusting the parsing logic for updated HTML and CSS.
+   - Including new headers and tags used in the website's current layout.
+
+---
+
+### Tools Used
+- **MechanicalSoup**: For browser emulation.
+- **BeautifulSoup**: For HTML parsing and data extraction.
+- **Pandas**: For data manipulation and storage.
+- **SQLite**: For optional database integration.
+
+---
+
+Feel free to explore the provided code and adapt it for other use cases. If you encounter any issues or have questions, open an issue in this repository!
