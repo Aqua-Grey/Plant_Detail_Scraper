@@ -34,16 +34,6 @@ Before the update, this script was used to:
 
 ---
 
-### How to Adapt the Script
-
-If you are looking to scrape data from the new Calscape site:
-1. Explore the **downloadable datasets** available on the new website. These datasets might provide all the information you need without requiring a scraper.
-2. If scraping is still necessary, the script must be updated to accommodate the new structure of the Calscape website. This may involve:
-   - Adjusting the parsing logic for updated HTML and CSS.
-   - Including new headers and tags used in the website's current layout.
-
----
-
 ### Tools Used
 - **MechanicalSoup**: For browser emulation.
 - **BeautifulSoup**: For HTML parsing and data extraction.
@@ -52,4 +42,4 @@ If you are looking to scrape data from the new Calscape site:
 
 ---
 
-Feel free to explore the provided code and adapt it for other use cases. If you encounter any issues or have questions, open an issue in this repository!
+Feel free to explore the provided code. If you encounter any issues or have questions, open an issue in this repository!
